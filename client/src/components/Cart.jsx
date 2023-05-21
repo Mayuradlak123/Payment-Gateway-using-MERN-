@@ -5,13 +5,12 @@ import axios from "axios";
 const Cart = () => {
   const SERVER_URL = "http://localhost:4000/payment";
   const successPayment = (data) => {
-    alert("Payment Successful");
-    console.log(JSON.stringify(data));
+ 
   };
 
   const errorPayment = (data) => {
-    alert("Payment Error");
-    console.log("Payment Error Occurs");
+   
+   
   };
 
   const onToken = (token) => {
@@ -29,7 +28,10 @@ const Cart = () => {
         },
       })
 
-      .then(successPayment)
+      .then((res)=>{
+        alert("Payment Successfully Completed");
+        console.log(JSON.stringify(data));
+      })
       .catch(errorPayment);
   };
   return (

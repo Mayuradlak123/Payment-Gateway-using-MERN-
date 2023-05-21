@@ -20,10 +20,9 @@ const postStripeCharge = (res) => (stripeErr, stripeRes) => {
     }
 }
 const createCustomer = (req, res) => {
-    console.log(JSON.stringify(req.body));
     stripe.customers.create({
             email: "mayuradlak030@gmail.com",
-            source: req.body.source,
+            source: req.body.body.source,
             name: 'Gourav Hammad',
             address: {
                 line1: 'TC 9/4 Old MES colony',
@@ -31,23 +30,30 @@ const createCustomer = (req, res) => {
                 city: 'Indore',
                 state: 'Madhya Pradesh',
                 country: 'India',
-            }
+            },
         })
-        .then((customer) => {
-            console.log(JSON.stringify(customer));
-            // console.log("Payment Successfully Completed " + JSON.stringify(customer));
-            return stripe.charges.create({
+        .then(async(customer) => {
+            console.log("This is Customer Id : " + customer);
+            const paymentMethods = await stripe.paymentMethods.list({
+                customer: customer.id,
+                type: 'card',
+            });
+            stripe.charges.create({
                 amount: 2500, // Charging Rs 25
                 description: 'Web Development Product',
                 currency: 'INR',
+                payment_method: 'pm_card_visa',
                 customer: customer.id
             });
+            console.log("Payment Successfully Completed ");;
         })
         .then((charge) => {
-            res.json({ message: "Payment Successfull " }).status(202) // If no error occurs
+            res.json({ message: "Payment Successfully Completed " }).status(202)
+                // If no error occurs
+            console.log("Payment Successfully Completed 0", { message: charge });
         })
         .catch((err) => {
-            console.log(err.message);
+
             res.json({ message: "Payment Failed " }).status(500)
         });
 }
